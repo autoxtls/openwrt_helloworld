@@ -18,6 +18,7 @@ PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
 
+GO_AMD64:=v3
 GO_PKG:=github.com/xtls/xray-core
 GO_PKG_LDFLAGS:=-s -w
 GO_PKG_BUILD_PKG:=$(GO_PKG)/main
@@ -42,7 +43,6 @@ define Package/xray-core/description
 endef
 
 define Package/xray-core/install
-        $(call Build/Compile/Default,GOAMD64=v3)
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/main $(1)/usr/bin/xray

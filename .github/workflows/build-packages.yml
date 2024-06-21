@@ -27,8 +27,16 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
-          GOAMD64: v3
           PACKAGES: xray-core
+          NO_REFRESH_CHECK: true
+          IGNORE_ERRORS: true
+
+      - name: Build Packages2
+        uses: sbwml/openwrt-gh-action-sdk@helloworld
+        env:
+          ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
+          FEEDNAME: packages_ci
+          PACKAGES: sing-box
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 

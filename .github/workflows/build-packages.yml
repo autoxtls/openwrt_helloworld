@@ -13,7 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         arch:
-          - aarch64_generic
           - x86_64
         tag:
           - openwrt-23.05

@@ -27,6 +27,7 @@ jobs:
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
+          GOAMD64: v3
           PACKAGES: xray-core
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true

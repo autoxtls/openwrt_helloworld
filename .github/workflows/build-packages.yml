@@ -22,6 +22,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Run update.sh in second-level directory
+        run: 
+          bash xray-core/update.sh
+
       - name: Build Packages
         uses: pmkol/openwrt-gh-action-sdk@main
         env:

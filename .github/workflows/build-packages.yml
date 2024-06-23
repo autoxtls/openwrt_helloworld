@@ -13,6 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         arch:
+          - aarch64_generic
           - x86_64
         tag:
           - openwrt-23.05
@@ -22,17 +23,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run update.sh in second-level directory
+      - name: Update Packages
         run: 
           bash xray-core/update.sh
 
       - name: Build Packages
-        uses: pmkol/openwrt-gh-action-sdk@main
+        uses: pmkol/openwrt-gh-action-sdk@amd64v2
         env:
           ARCH: ${{ matrix.arch }}-${{ matrix.tag }}
           FEEDNAME: packages_ci
           PACKAGES: xray-core
-          SET_GOAMD64: v3
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
@@ -45,8 +45,8 @@ jobs:
       - name: Get Latest Tag
         run: |
           LATEST_TAG=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | jq -r '.tag_name')
-          echo "latest_tag=$RELEASE_COMMITS" >> $GITHUB_ENV
-          echo "https://github.com/XTLS/Xray-core/commit/$LATEST_TAG"
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_ENV
+          echo "https://github.com/XTLS/Xray-core/releases/tag/$LATEST_TAG"
 
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@v3.0.0
@@ -62,7 +62,9 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           release_name: ${{env.latest_tag}}
           tag: ${{env.latest_tag}}
-          body: Powered by OpenWrt SDK 23.05
+          body: |
+            Build OpenWrt packages from xray-core releases:
+            https://github.com/XTLS/Xray-core/releases/tag/${{env.latest_tag}}
           file_glob: true
           overwrite: true
           file: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk

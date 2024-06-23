@@ -42,12 +42,17 @@ jobs:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
+      - name: Get Latest Tag
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | jq -r '.tag_name')
+          echo "latest_tag=$RELEASE_COMMITS" >> $GITHUB_ENV
+          echo "https://github.com/XTLS/Xray-core/commit/$LATEST_TAG"
 
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@v3.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: latest
+          tag: ${{env.latest_tag}}
           deleteOnlyFromDrafts: false
 
       - name: Create and Upload Release
@@ -55,11 +60,9 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: ${{env.release_title}}
-          tag: latest
-          body: |
-            Latest commit from the main branch:
-            https://github.com/XTLS/Xray-core/commit/${{env.release_commits}}
+          release_name: ${{env.latest_tag}}
+          tag: ${{env.latest_tag}}
+          body: Powered by OpenWrt SDK 23.05
           file_glob: true
           overwrite: true
           file: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk

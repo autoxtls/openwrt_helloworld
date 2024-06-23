@@ -41,3 +41,25 @@ jobs:
         with:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+
+
+      - name: Delete current release assets
+        uses: andreaswilli/delete-release-assets-action@v3.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: latest
+          deleteOnlyFromDrafts: false
+
+      - name: Create and Upload Release
+        id: upload_release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          release_name: ${{env.release_title}}
+          tag: latest
+          body: |
+            Latest commit from the main branch:
+            https://github.com/XTLS/Xray-core/commit/${{env.release_commits}}
+          file_glob: true
+          overwrite: true
+          file: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk

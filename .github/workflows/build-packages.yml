@@ -56,13 +56,6 @@ jobs:
           echo "latest_tag=$LATEST_TAG" >> $GITHUB_ENV
           echo "https://github.com/XTLS/Xray-core/releases/tag/$LATEST_TAG"
 
-      - name: Delete current release assets
-        uses: andreaswilli/delete-release-assets-action@v3.0.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{env.latest_tag}}
-          deleteOnlyFromDrafts: false
-
       - name: Create and Upload Release
         id: upload_release
         uses: svenstaro/upload-release-action@v2

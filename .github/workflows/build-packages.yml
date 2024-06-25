@@ -43,8 +43,8 @@ jobs:
             pkg_version=$(basename "$pkg" | cut -d "_" -f 2)
             echo "${pkg_name} ${pkg_version}" >> bin/packages/${{ matrix.arch }}/packages_ci/package.ver
           done
-          pkg_body=$(cat bin/packages/${{ matrix.arch }}/packages_ci/package.ver)
-          echo "latest_body=$pkg_body" >> $GITHUB_ENV
+          echo "latest_body=$(cat bin/packages/${{ matrix.arch }}/packages_ci/package.ver)" >> $GITHUB_ENV
+          echo "latest_release=v$(date +'%Y%m%d')" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -57,7 +57,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          release_name: OpenWrt-Packages v$(date +'%Y%m%d')
+          release_name: OpenWrt-Packages ${{env.latest_release}}
           tag: latest
           body: ${{env.latest_body}}
           file_glob: true

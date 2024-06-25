@@ -67,4 +67,4 @@ jobs:
             https://github.com/XTLS/Xray-core/releases/tag/${{env.latest_tag}}
           file_glob: true
           overwrite: true
-          file: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,sha256sum}

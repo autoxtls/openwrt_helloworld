@@ -43,6 +43,8 @@ jobs:
             pkg_version=$(basename "$pkg" | cut -d "_" -f 2)
             echo "${pkg_name} ${pkg_version}" >> bin/packages/${{ matrix.arch }}/packages_ci/package.ver
           done
+          pkg_body=$(cat bin/packages/${{ matrix.arch }}/packages_ci/package.ver)
+          echo "latest_body=$pkg_body" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -57,9 +59,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           release_name: OpenWrt-Packages v$(date +'%Y%m%d')
           tag: latest
-          body: |
-            Build OpenWrt packages from xray-core releases:
-            https://github.com/XTLS/Xray-core/releases/tag/${{env.latest_tag}}
+          body: ${{env.latest_body}}
           file_glob: true
           overwrite: true
           file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}

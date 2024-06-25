@@ -36,6 +36,14 @@ jobs:
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
+      - name: Extract package info
+        run: |
+          for pkg in bin/packages/${{ matrix.arch }}/packages_ci/*.ipk; do
+            pkg_name=$(basename "$pkg" | cut -d "_" -f 1)
+            pkg_version=$(basename "$pkg" | cut -d "_" -f 2)
+            echo "${pkg_name} ${pkg_version}" >> bin/packages/${{ matrix.arch }}/packages_ci/package.ver
+          done
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -67,4 +75,4 @@ jobs:
             https://github.com/XTLS/Xray-core/releases/tag/${{env.latest_tag}}
           file_glob: true
           overwrite: true
-          file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,sha256sum}
+          file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}

@@ -55,7 +55,7 @@ jobs:
         uses: andreaswilli/delete-release-assets-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{env.latest_tag}}
+          tag: latest
           deleteOnlyFromDrafts: false
 
       - name: Create and Upload Release

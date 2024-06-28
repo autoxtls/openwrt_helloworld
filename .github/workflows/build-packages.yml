@@ -52,7 +52,7 @@ jobs:
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
       - name: Delete current release assets
-        uses: andreaswilli/delete-release-assets-action@v4.0.0
+        uses: andreaswilli/delete-release-assets-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{env.latest_tag}}

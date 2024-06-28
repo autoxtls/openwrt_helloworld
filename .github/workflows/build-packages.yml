@@ -51,6 +51,19 @@ jobs:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
+  release:
+    name: Create and Upload Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.tag }}-${{ matrix.arch }}
+
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@main
         with:

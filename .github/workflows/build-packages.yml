@@ -44,38 +44,52 @@ jobs:
             echo "${pkg_name} ${pkg_version}" >> bin/packages/${{ matrix.arch }}/packages_ci/package.ver
           done
           echo "latest_release=$(date +'%Y%m%d')" >> $GITHUB_ENV
-
+      
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.tag }}-${{ matrix.arch }}
+          name: ${{ matrix.arch }}-${{ matrix.tag }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}
 
-  release:
-    name: Create and Upload Release
+  gather-artifacts:
+    name: Gather Artifacts
     needs: build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch:
-          - aarch64_generic
-          - x86_64
-        tag:
-          - openwrt-23.05
-
     steps:
       - name: Download aarch64_generic artifacts
         uses: actions/download-artifact@v4
         with:
-          name: openwrt-23.05-aarch64_generic
-          path: bin/packages/aarch64_generic/packages_ci
+          name: aarch64_generic-openwrt-23.05
+          path: aarch64_generic
 
       - name: Download x86_64 artifacts
         uses: actions/download-artifact@v4
         with:
-          name: openwrt-23.05-x86_64
-          path: bin/packages/x86_64/packages_ci
+          name: x86_64-openwrt-23.05
+          path: x86_64
+
+      - name: Combine artifacts
+        run: |
+          mkdir -p combined
+          cp aarch64_generic/* combined/
+          cp x86_64/* combined/
+      
+      - name: Upload combined artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: combined-packages
+          path: combined/*
+
+  release:
+    name: Create and Upload Release
+    needs: gather-artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download combined artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: combined-packages
+          path: combined
 
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@main
@@ -94,4 +108,4 @@ jobs:
           body: Latest build on ${{ env.latest_release }}
           file_glob: true
           overwrite: true
-          file: bin/packages/**/*.{ipk,ver}
+          file: combined/*.{ipk,ver}

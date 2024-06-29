@@ -60,6 +60,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
+          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
 
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@main

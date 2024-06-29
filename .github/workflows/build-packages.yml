@@ -48,19 +48,34 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: packages
+          name: ${{ matrix.tag }}-${{ matrix.arch }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}
 
   release:
     name: Create and Upload Release
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - aarch64_generic
+          - x86_64
+        tag:
+          - openwrt-23.05
+
     steps:
-      - name: Download artifacts
+      - name: Download aarch64_generic artifacts
         uses: actions/download-artifact@v4
         with:
-          name: packages
-          run: ls
+          name: openwrt-23.05-aarch64_generic
+          path: bin/packages/aarch64_generic/packages_ci
+
+      - name: Download x86_64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: openwrt-23.05-x86_64
+          path: bin/packages/x86_64/packages_ci
 
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@main

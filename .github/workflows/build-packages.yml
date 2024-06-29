@@ -49,18 +49,26 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
-          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          path: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}
 
   release:
     name: Create and Upload Release
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - aarch64_generic
+          - x86_64
+        tag:
+          - openwrt-23.05
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.tag }}-${{ matrix.arch }}
-          path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+          path: bin/packages/${{ matrix.arch }}/packages_ci
 
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@main
@@ -76,7 +84,7 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           release_name: OpenWrt-Packages
           tag: latest
-          body: Latest build on ${{env.latest_release}}
+          body: Latest build on ${{ env.latest_release }}
           file_glob: true
           overwrite: true
           file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}

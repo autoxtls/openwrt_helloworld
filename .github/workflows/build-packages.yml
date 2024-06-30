@@ -39,7 +39,7 @@ jobs:
       - name: Extract Packages SHA256
         run: |
           for pkg in bin/packages/${{ matrix.arch }}/packages_ci/*.ipk; do
-            sha256sum "$pkg" | awk -v filename="$(basename "$pkg")" '{ print $1, filename }' >> bin/packages/${{ matrix.arch }}/packages_ci/package.sha256sum
+            sha256sum "$pkg" | awk -v filename="$(basename "$pkg")" '{ print $1, filename }' >> bin/packages/${{ matrix.arch }}/packages_ci/packages.sha256sum
           done
           echo "latest_release=$(date +'%Y%m%d')" >> $GITHUB_ENV
 

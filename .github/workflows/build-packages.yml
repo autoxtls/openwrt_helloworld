@@ -36,13 +36,10 @@ jobs:
           NO_REFRESH_CHECK: true
           IGNORE_ERRORS: true
 
-      - name: Extract Packages Version
+      - name: Extract Packages SHA256
         run: |
           for pkg in bin/packages/${{ matrix.arch }}/packages_ci/*.ipk; do
-            pkg_name=$(basename "$pkg" | cut -d "_" -f 1)
-            pkg_version=$(basename "$pkg" | cut -d "_" -f 2)
-            pkg_arch=$(basename "$pkg" | cut -d "_" -f 3)
-            echo "${pkg_name} ${pkg_version} ${pkg_arch}" >> bin/packages/${{ matrix.arch }}/packages_ci/package.ver
+            sha256sum "$pkg" | awk -v filename="$(basename "$pkg")" '{ print $1, filename }' >> bin/packages/${{ matrix.arch }}/packages_ci/package.sha256sum
           done
           echo "latest_release=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
@@ -69,4 +66,4 @@ jobs:
           body: Latest build on ${{env.latest_release}}
           file_glob: true
           overwrite: true
-          file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,ver}
+          file: bin/packages/${{ matrix.arch }}/packages_ci/*.{ipk,sha256sum}
